@@ -27,7 +27,6 @@
     font-size: 35px;
     text-shadow: 4px 63x rgba(black, .1);
     }
-
 .logo{
 width: 100px;
 height: 100px;
@@ -35,7 +34,6 @@ align-items: center;
 margin-top: 40px;
 margin-left: 100px;
 }
-
 .body-do-painel{
     position: fixed;
     background-color: #252a48;
@@ -63,30 +61,36 @@ margin-left: 100px;
     line-height: 1.6em;
 }
 /* GRAFICOS */
+
+.figGraficoBarrasHoriCongestionamentoMes{
+    float: left;
+    width: 510px;
+    height: 100px;
+    margin-left: 360px;
+    margin-top: 10px;
+}
 .figGraficoCongestionamentoMesRegiao{
     float: right;
-    margin-top: 10px;
-    margin-right: 50px;
-    width: 1030px;
-    height: 100px;
-    border-radius: 10px;
+    margin-top:10px;
+    margin-right: 55px;
+    width: 505px;
+    height: 500px;
 }
 .figGraficoBarraComparacaoCongestionamentoMesRegiao{
     float: right;
-    margin-top: 400px;
+    margin-top: 20px;
+    margin-right: 50px;
+    width: 1030px;
+    height: 100px;
+}
+/* .fig5{
+    float: left;
+    margin-top: 790px;
     margin-right: 50px;
     width: 1030px;
     height: 100px;
     border-radius: 10px;
-}
-.figGraficoBarraComparacaoCongestionamentoMesRegiao{
-    float: right;
-    margin-top: 400px;
-    margin-right: 50px;
-    width: 1030px;
-    height: 100px;
-    border-radius: 10px;
-}
+} */
 
 
 /* INDICADORES */
@@ -108,7 +112,6 @@ margin-left: 100px;
     margin-left:10px;
 
 }
-
 .figIndicadorMesMaiorMediaCongestionamento{
     float: left;
     margin-top: 30px; 
@@ -116,14 +119,6 @@ margin-left: 100px;
 
 }
 
-.grafico5{
-    float: left;
-    margin-top: 7800px;
-    margin-right: 50px;
-    width: 1030px;
-    height: 100px;
-    border-radius: 10px;
-}
 .grafico6{
     float: right;
     margin-top: 400px;
