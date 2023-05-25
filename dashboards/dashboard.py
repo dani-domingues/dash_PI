@@ -262,8 +262,98 @@ figGraficoBarrasHoriCongestionamentoMes.update_layout(
     )
     )
 
+#Gerar Data Frame com média agrupadas por mês e região
+df_grouped2 = df_2022.groupby(['Mes', 'Regiao'], sort=False)['Tamanho'].mean().reset_index()
+df_grouped2.head()
+# Gerar gráfico de linha comparando região por mês
+figGraficoLinhaComparacaoRegiaoMes = px.line(df_grouped2, x = "Mes", y = "Tamanho", color= "Regiao")
+figGraficoLinhaComparacaoRegiaoMes.update_layout(
+    autosize=False,
+    width=1020,
+    height=400,
+    plot_bgcolor='rgba(0, 0, 0, 0)',  # Define a cor de fundo do gráfico como transparente
+    paper_bgcolor='#252a48',  # Define a cor de fundo do papel como '#252a48'
+    legend=dict(
+        x=1.02,
+        y=0.98,
+        bgcolor='rgba(255, 255, 255, 0.1)',
+        bordercolor='#252a48',
+        borderwidth=2,
+        font=dict(
+            color='#fff' # Define a cor do texto da legenda como branco
+        )
+    ),
+        title_font=dict(
+        color='#fff'  # Define a cor do título do gráfico como branco
+    ),
+    xaxis=dict(
+        tickfont=dict(
+            color='#fff'  # Define a cor dos números e meses no eixo X como branco
+        ),
+        title_font=dict(
+            color='#fff'  # Define a cor do título do eixo X como branco
+        )
+    ),
+    yaxis=dict(
+        tickfont=dict(
+            color='#fff'  # Define a cor dos números no eixo Y como branco
+        ),
+        title_font=dict(
+            color='#fff'  # Define a cor do título do eixo Y como branco
+        )
+    )
+    )
 
-
+dias_semana_ordem = ['segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado', 'domingo']
+# Agrupar por dia da semana e região e calcular a soma do tamanho
+df2 = pd.Categorical(df_2022['Dia da Semana'],categories=dias_semana_ordem, ordered=True)
+df_grouped3 = df_2022.groupby(['Dia da Semana', 'Regiao'], sort=False)['Tamanho'].mean().reset_index()
+df_grouped3.head()
+# Criar o gráfico de barras
+figGraficoBarraDiaSemana = go.Figure(data=[
+    go.Bar(name='LESTE', x=df_grouped3[df_grouped3['Regiao'] == 'LESTE']['Dia da Semana'], y=df_grouped3[df_grouped3['Regiao'] == 'LESTE']['Tamanho']),
+    go.Bar(name='CENTRO', x=df_grouped3[df_grouped3['Regiao'] == 'CENTRO']['Dia da Semana'], y=df_grouped3[df_grouped3['Regiao'] == 'CENTRO']['Tamanho']),
+    go.Bar(name='NORTE', x=df_grouped3[df_grouped3['Regiao'] == 'NORTE']['Dia da Semana'], y=df_grouped3[df_grouped3['Regiao'] == 'NORTE']['Tamanho']),
+    go.Bar(name='OESTE', x=df_grouped3[df_grouped3['Regiao'] == 'OESTE']['Dia da Semana'], y=df_grouped3[df_grouped3['Regiao'] == 'OESTE']['Tamanho']),
+    go.Bar(name='SUL', x=df_grouped3[df_grouped3['Regiao'] == 'SUL']['Dia da Semana'], y=df_grouped3[df_grouped3['Regiao'] == 'SUL']['Tamanho'])
+])
+# Atualizar o layout do gráfico
+figGraficoBarraDiaSemana.update_layout(
+    autosize=False,
+    width=1020,
+    height=400,
+    plot_bgcolor='rgba(0, 0, 0, 0)',  # Define a cor de fundo do gráfico como transparente
+    paper_bgcolor='#252a48',  # Define a cor de fundo do papel como '#252a48'
+    legend=dict(
+        x=1.02,
+        y=0.98,
+        bgcolor='rgba(255, 255, 255, 0.1)',
+        bordercolor='#252a48',
+        borderwidth=2,
+        font=dict(
+            color='#fff' # Define a cor do texto da legenda como branco
+        )
+    ),
+        title_font=dict(
+        color='#fff'  # Define a cor do título do gráfico como branco
+    ),
+    xaxis=dict(
+        tickfont=dict(
+            color='#fff'  # Define a cor dos números e meses no eixo X como branco
+        ),
+        title_font=dict(
+            color='#fff'  # Define a cor do título do eixo X como branco
+        )
+    ),
+    yaxis=dict(
+        tickfont=dict(
+            color='#fff'  # Define a cor dos números no eixo Y como branco
+        ),
+        title_font=dict(
+            color='#fff'  # Define a cor do título do eixo Y como branco
+        )
+    )
+    )
 
 # Caixa layout
 app.layout = html.Div([ 
@@ -293,6 +383,7 @@ app.layout = html.Div([
         ]
     ),
 
+    
     # INDICADORES
     html.Div(
     className="figIndicadorZonaMaoirMediaCongestionamento",
@@ -347,8 +438,10 @@ app.layout = html.Div([
     ]
 ),
     
+
     # GRAFICOS
-        html.Div(
+
+    html.Div(
     className="figGraficoBarrasHoriCongestionamentoMes",
     children=[
         dcc.Graph(
@@ -376,11 +469,37 @@ app.layout = html.Div([
         ]
     ),
     html.Div(
+    className="figGraficoBarraDiaSemana",
+    children=[
+        dcc.Graph(
+            id='figGraficoBarraDiaSemana',
+            figure=figGraficoBarraDiaSemana,
+            style={
+                'borderRadius': '10px',
+                'border': '5px solid #252a48'
+            }        
+)
+    ]
+),
+    html.Div(
     className="figGraficoBarraComparacaoCongestionamentoMesRegiao",
     children=[
         dcc.Graph(
             id='grafico_frutas',
             figure=figGraficoBarraComparacaoCongestionamentoMesRegiao,
+            style={
+                'borderRadius': '10px',
+                'border': '5px solid #252a48'
+            }        
+)
+    ]
+),
+    html.Div(
+    className="figGraficoLinhaComparacaoRegiaoMes",
+    children=[
+        dcc.Graph(
+            id='figGraficoLinhaComparacaoRegiaoMes',
+            figure=figGraficoLinhaComparacaoRegiaoMes,
             style={
                 'borderRadius': '10px',
                 'border': '5px solid #252a48'
