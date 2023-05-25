@@ -62,40 +62,69 @@ margin-left: 100px;
     text-align: justify;
     line-height: 1.6em;
 }
+/* GRAFICOS */
+.figGraficoCongestionamentoMesRegiao{
+    float: right;
+    margin-top: 10px;
+    margin-right: 50px;
+    width: 1030px;
+    height: 100px;
+    border-radius: 10px;
+}
+.figGraficoBarraComparacaoCongestionamentoMesRegiao{
+    float: right;
+    margin-top: 400px;
+    margin-right: 50px;
+    width: 1030px;
+    height: 100px;
+    border-radius: 10px;
+}
+.figGraficoBarraComparacaoCongestionamentoMesRegiao{
+    float: right;
+    margin-top: 400px;
+    margin-right: 50px;
+    width: 1030px;
+    height: 100px;
+    border-radius: 10px;
+}
 
-.grafico1{
-    float: right;
-    margin-top: 30px;
-    margin-right: 50px;
-    width: 1030px;
-    height: 100px;
-    border-radius: 10px;
-}
-.grafico2{
-    float: right;
-    margin-top: 400px;
-    margin-right: 50px;
-    width: 500px;
-    height: 100px;
-    border-radius: 10px;
-}
-.grafico3{
+
+/* INDICADORES */
+.figIndicadorZonaMaoirMediaCongestionamento{
     float: left;
-    margin-top: 400px;
-    margin-left: 360px;
-    width: 500px;
-    height: 100px;
-    border-radius: 10px;
+    margin-top: 30px;
+    margin-left:360px;
+
 }
-.grafico4{
-    float: right;
-    margin-top: 400px;
+.figIndicadorDiaComMaiorMediaCongestionamento{
+    float: left;
+    margin-top: 30px;
+    margin-left: 10px;
+
+}
+.figIndicadorViaComMaoirMediaCongestionamento{
+    float: left;
+    margin-top: 30px;
+    margin-left:10px;
+
+}
+
+.figIndicadorMesMaiorMediaCongestionamento{
+    float: left;
+    margin-top: 30px; 
+    margin-left: 10px;
+
+}
+
+.grafico5{
+    float: left;
+    margin-top: 7800px;
     margin-right: 50px;
     width: 1030px;
     height: 100px;
     border-radius: 10px;
 }
-.grafico5{
+.grafico6{
     float: right;
     margin-top: 400px;
     margin-right: 50px;

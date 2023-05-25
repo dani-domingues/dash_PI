@@ -3,13 +3,15 @@ import plotly.express as px
 import pandas as pd             
 import plotly.graph_objects as go
 import plotly.subplots as sp
+import plotly.io as pio
+
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 # definindo aplicativo do flask
 app = Dash(__name__, title='Tráfego Urbano')                         
 
-df_2022 = pd.read_csv("./assets/bd_transito_2022.csv", sep=",")
+df_2022 = pd.read_csv("/Users/danieladomingues/Documents/dash_PI/dashboards/assets/bd_transito_2022.csv", sep=",")
 
 #Criar variaveis dia da semana para organizar Data Frame
 dias_semana_ordem = ['segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado', 'domingo']
@@ -21,54 +23,26 @@ df_grouped3 = round(df_2022.groupby(['Dia da Semana', 'Regiao'], sort=False)['Ta
 
 # Gerar gráfico de pizza comparando região com tamanho do congestionamento
 
-fig1 = go.Figure()
-fig1.add_trace(go.Pie(labels=df_grouped3['Regiao'],values=df_grouped3['Tamanho'], hole=.65))
-
-#Agrupando por local e tirando a média de congestionamento
-df_grouped_local1 = df_2022.groupby(['Local'], sort=False)['Tamanho'].mean()
-df_grouped_local1.sort_values(ascending=False, inplace=True)
-df_grouped_local = df_grouped_local1.reset_index()
-
-#M ostrando indicador de via com maior média de congestionamento
-fig2 = go.Figure()
-fig2.add_trace(go.Indicator(mode='number+delta',
-                            title = {"text": f"<span style='font-size:150%'>{df_grouped_local['Local'].iloc[0]} - Via com maior média de congestionamento</span><br><span style='font-size:70%'> Relacionado com a média das demais vias</span>"},
-                            value = round(df_grouped_local['Tamanho'].iloc[0],0),
-                            number = {"suffix": " metros"},
-                            delta = {'relative': True, 'valueformat': '.1%', 'reference': df_grouped_local['Tamanho'].mean()}
-                            )
-)
-
-
-#Agrupando por região e calculando a média de cada região
-df_grouped_regiao1 = round(df_2022.groupby(['Regiao'], sort=False)['Tamanho'].mean(),2)
-df_grouped_regiao1.sort_values(ascending=False, inplace=True)
-df_grouped_regiao = df_grouped_regiao1.reset_index()
-
-
-#Mostrando indicador da região com maior média de congestionamento
-fig3 = go.Figure()
-fig3.add_trace(go.Indicator(mode='number+delta',
-                            title = {"text": f"<span style='font-size:150%'>{df_grouped_regiao['Regiao'].iloc[0]} - Regiao com maior média de congestionamento</span><br><span style='font-size:70%'> Relacionado com a média das demais Regiões</span>"},
-                            value = round(df_grouped_regiao['Tamanho'].iloc[0],0),
-                            number = {"suffix": " metros"},
-                            delta = {'relative': True, 'valueformat': '.1%', 'reference': df_grouped_regiao['Tamanho'].mean()}
-                            )
-)
-
-fig3.update_layout(
+figGraficoCongestionamentoMesRegiao = go.Figure()
+figGraficoCongestionamentoMesRegiao.add_trace(go.Pie(labels=df_grouped3['Regiao'],values=df_grouped3['Tamanho'], hole=.65))
+figGraficoCongestionamentoMesRegiao.update_layout(
+    title='Comparação de Congestionamento por Mês e Região',
+    xaxis_title='Mês',
+    yaxis_title='Congestionamento (em metros)',
+    barmode='group',
+    plot_bgcolor='rgba(0, 0, 0, 0)',  # Define a cor de fundo do gráfico como transparente
     paper_bgcolor='#252a48',  # Define a cor de fundo do papel como '#252a48'
     legend=dict(
         x=1.02,
         y=0.98,
         bgcolor='rgba(255, 255, 255, 0.1)',
-        bordercolor='#fff',
+        bordercolor='#252a48',
         borderwidth=2,
         font=dict(
             color='#fff' # Define a cor do texto da legenda como branco
         )
     ),
-    title_font=dict(
+        title_font=dict(
         color='#fff'  # Define a cor do título do gráfico como branco
     ),
     xaxis=dict(
@@ -87,8 +61,96 @@ fig3.update_layout(
             color='#fff'  # Define a cor do título do eixo Y como branco
         )
     )
+    )
+#Agrupando por local e tirando a média de congestionamento
+df_grouped_local1 = df_2022.groupby(['Local'], sort=False)['Tamanho'].mean()
+df_grouped_local1.sort_values(ascending=False, inplace=True)
+df_grouped_local = df_grouped_local1.reset_index()
+
+#M ostrando indicador de via com maior média de congestionamento
+figIndicadorZonaMaoirMediaCongestionamento = go.Figure()
+figIndicadorZonaMaoirMediaCongestionamento.add_trace(go.Indicator(
+    mode='number+delta',
+    title={
+        "text": f"<span style='font-size:270%; color:#fff; text-align:center;'>{df_grouped_local['Local'].iloc[0]}</span><br><br><span style='font-size:175%; color:#fff; text-align:center;'>Via com maior média de congestionamento</span><br><br><span style='font-size:150%; color:#fff; text-align:center;'>Relacionado com a média das demais vias</span>"
+    },
+    value=round(df_grouped_local['Tamanho'].iloc[0], 0),
+    number={"suffix": " metros"},
+    delta={'valueformat': '.1%', 'reference': df_grouped_local['Tamanho'].mean()},
+    number_font={"size": 20, "color": "#fff"}  # Ajuste o tamanho e a cor do número do indicador aqui
+))
+figIndicadorZonaMaoirMediaCongestionamento.update_layout(
+    paper_bgcolor='#252a48',  # Define a cor de fundo do papel como '#252a48'
+    font=dict(color='#fff'),  # Define a cor do texto do gráfico como branco
+    height=160,
+    width=239,
+    # ... outras configurações de layout ...
 )
 
+#Agrupando por região e calculando a média de cada região
+df_grouped_regiao1 = round(df_2022.groupby(['Regiao'], sort=False)['Tamanho'].mean(),2)
+df_grouped_regiao1.sort_values(ascending=False, inplace=True)
+df_grouped_regiao = df_grouped_regiao1.reset_index()
+
+
+#Mostrando indicador da região com maior média de congestionamento
+figIndicadorViaComMaoirMediaCongestionamento = go.Figure()
+figIndicadorViaComMaoirMediaCongestionamento.add_trace(go.Indicator(mode='number+delta',
+                            title = {"text": f"<span style='font-size:270%; color:#fff; text-align:center;'>{df_grouped_regiao['Regiao'].iloc[0]}</span><br><br><span style='font-size:175%; color:#fff; text-align:center;'>Regiao com maior média de congestionamento</span><br><br><span style='font-size:150%; color:#fff; text-align:center;'>Relacionado com a média das demais Regiões</span>"},
+                            value = round(df_grouped_regiao['Tamanho'].iloc[0],0),
+                            number = {"suffix": " metros"},
+                            delta = {'relative': True, 'valueformat': '.1%', 'reference': df_grouped_regiao['Tamanho'].mean()},
+                            number_font={"size": 30, "color": "#fff"}  # Ajuste o tamanho e a cor do número do indicador aqui
+                            )
+)
+
+figIndicadorViaComMaoirMediaCongestionamento.update_layout(
+    paper_bgcolor='#252a48',  # Define a cor de fundo do papel como '#252a48'
+    font=dict(color='#fff'),  # Define a cor do texto do gráfico como branco
+    height=160,
+    width=239,
+    )
+
+df_grouped_dia_semana = round(df_2022.groupby(['Dia da Semana'], sort=False)['Tamanho'].mean(),2)
+df_grouped_dia_semana.sort_values(ascending=False, inplace=True)
+df_grouped_dia_semana = df_grouped_dia_semana.reset_index()
+df_grouped_dia_semana.head()
+
+figIndicadorDiaComMaiorMediaCongestionamento = go.Figure()
+figIndicadorDiaComMaiorMediaCongestionamento.add_trace(go.Indicator(mode='number+delta',
+                            title = {"text": f"<span style='font-size:270%; color:#fff; text-align:center;'>{df_grouped_dia_semana['Dia da Semana'].iloc[0]}</span><br><br><span style='font-size:175%; color:#fff; text-align:center;'> Dia com maior média de congestionamento</span><br><br><span style='font-size:150%; color:#fff; text-align:center;'>Relacionado com a média dos demais dias</span>"},
+                            value = round(df_grouped_dia_semana['Tamanho'].iloc[0],0),
+                            number = {"suffix": " metros"},
+                            delta = {'relative': True, 'valueformat': '.1%', 'reference': df_grouped_dia_semana['Tamanho'].mean()},
+                            number_font={"size": 30, "color": "#fff"}  # Ajuste o tamanho e a cor do número do indicador aqui
+                            )
+)
+
+figIndicadorDiaComMaiorMediaCongestionamento.update_layout(
+    paper_bgcolor='#252a48',  # Define a cor de fundo do papel como '#252a48'
+    font=dict(color='#fff'),  # Define a cor do texto do gráfico como branco
+    height=160,
+    width=239,
+)
+df_grouped_mes = round(df_2022.groupby(['Mes'], sort=False)['Tamanho'].mean(),2)
+df_grouped_mes.sort_values(ascending=False, inplace=True)
+df_grouped_mes = df_grouped_mes.reset_index()
+df_grouped_mes.head()
+figIndicadorMesMaiorMediaCongestionamento = go.Figure()
+figIndicadorMesMaiorMediaCongestionamento .add_trace(go.Indicator(mode='number+delta',
+                            title = {"text": f"<span style='font-size:100%; color:#fff; text-align:center;'>{df_grouped_mes['Mes'].iloc[0]}</span><br><br><span style='font-size:175%; color:#fff; text-align:center;'>Mês com maior média de congestionamento/span><br><br><span style='font-size:50%; color:#fff; text-align:center;'> Relacionado com a média dos demais Meses</span>"},
+                            value = round(df_grouped_mes['Tamanho'].iloc[0],0),
+                            number = {"suffix": " metros"},
+                            delta = {'relative': True, 'valueformat': '.1%', 'reference': df_grouped_mes['Tamanho'].mean()}
+                            )
+)
+
+figIndicadorMesMaiorMediaCongestionamento .update_layout(
+    paper_bgcolor='#252a48',  # Define a cor de fundo do papel como '#252a48'
+    font=dict(color='#fff'),  # Define a cor do texto do gráfico como branco
+    height=160,
+    width=239,
+    )
 
 
 # Agrupar por mês e região e calcular a soma do tamanho do congestionamento
@@ -96,7 +158,7 @@ df_grouped_mes = df_2022.groupby(['Mes', 'Regiao'], sort=False)['Tamanho'].sum()
 
 
 # Criar o gráfico de barras comparando cada região
-fig4 = go.Figure(data=[
+figGraficoBarraComparacaoCongestionamentoMesRegiao = go.Figure(data=[
     go.Bar(name='LESTE', x=df_grouped_mes[df_grouped_mes['Regiao'] == 'LESTE']['Mes'], y=df_grouped_mes[df_grouped_mes['Regiao'] == 'LESTE']['Tamanho']),
     go.Bar(name='CENTRO', x=df_grouped_mes[df_grouped_mes['Regiao'] == 'CENTRO']['Mes'], y=df_grouped_mes[df_grouped_mes['Regiao'] == 'CENTRO']['Tamanho']),
     go.Bar(name='NORTE', x=df_grouped_mes[df_grouped_mes['Regiao'] == 'NORTE']['Mes'], y=df_grouped_mes[df_grouped_mes['Regiao'] == 'NORTE']['Tamanho']),
@@ -105,7 +167,7 @@ fig4 = go.Figure(data=[
 ])
 
 # Atualizar o layout do gráfico
-fig4.update_layout(
+figGraficoBarraComparacaoCongestionamentoMesRegiao.update_layout(
     title='Comparação de Congestionamento por Mês e Região',
     xaxis_title='Mês',
     yaxis_title='Congestionamento (em metros)',
@@ -269,14 +331,65 @@ app.layout = html.Div([
                 ''', className="body-do-painel-texto"),
         ]
     ),
-
+    html.Div(
+    className="figIndicadorZonaMaoirMediaCongestionamento",
+    children=[
+        dcc.Graph(
+            id='figIndicadorZonamMaoirMediaCongestionamento',
+            figure=figIndicadorZonaMaoirMediaCongestionamento,
+            style={
+                'borderRadius': '10px',
+                'border': '5px solid #252a48'
+            }        
+)
+    ]
+),
+    html.Div(
+    className="figIndicadorDiaComMaiorMediaCongestionamento",
+    children=[
+        dcc.Graph(
+            id='IndicadorDiaComMaiorMediaCongestionamento',
+            figure=figIndicadorDiaComMaiorMediaCongestionamento,
+            style={
+                'borderRadius': '10px',
+                'border': '5px solid #252a48'
+            }         
+)
+    ]
+),
+    html.Div(
+    className="figIndicadorMesMaiorMediaCongestionamento",
+    children=[
+        dcc.Graph(
+            id='figIndicadorMesMaiorMediaCongestionamento',
+            figure=figIndicadorMesMaiorMediaCongestionamento,
+            style={
+                'borderRadius': '10px',
+                'border': '5px solid #252a48'
+            }          
+)
+    ]
+),
+    html.Div(
+    className="figIndicadorViaComMaoirMediaCongestionamento",
+    children=[
+        dcc.Graph(
+            id='figIndicadorViaComMaoirMediaCongestionamento',
+            figure=figIndicadorViaComMaoirMediaCongestionamento,
+            style={
+                'borderRadius': '10px',
+                'border': '5px solid #252a48'
+            }         
+)
+    ]
+),
     
     html.Div(
-        className="grafico1",
+        className="figGraficoCongestionamentoMesRegiao",
         children=[
             dcc.Graph(
                 id='grafico_frutas',
-                figure=fig1,
+                figure=figGraficoCongestionamentoMesRegiao,
                 style={
                 'borderRadius': '10px',
                 'border': '20px solid #252a48'
@@ -285,38 +398,14 @@ app.layout = html.Div([
     )
         ]
     ),
+    
+
     html.Div(
-    className="grafico2",
+    className="figGraficoBarraComparacaoCongestionamentoMesRegiao",
     children=[
         dcc.Graph(
             id='grafico_frutas',
-            figure=fig2,
-            style={
-                'borderRadius': '10px',
-                'border': '20px solid #252a48'
-            }        
-)
-    ]
-),
-    html.Div(
-    className="grafico3",
-    children=[
-        dcc.Graph(
-            id='grafico_frutas',
-            figure=fig3,
-            style={
-                'borderRadius': '10px',
-                'border': '20px solid #252a48'
-            }        
-)
-    ]
-),
-    html.Div(
-    className="grafico4",
-    children=[
-        dcc.Graph(
-            id='grafico_frutas',
-            figure=fig4,
+            figure=figGraficoBarraComparacaoCongestionamentoMesRegiao,
             style={
                 'borderRadius': '10px',
                 'border': '20px solid #252a48'
@@ -342,6 +431,6 @@ app.layout = html.Div([
 
 ])
 
-# Coloca no ar
+# Colocar no ar
 if __name__ == '__main__':
     app.run_server(debug=True)
