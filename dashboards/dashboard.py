@@ -11,7 +11,7 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 # definindo aplicativo do flask
 app = Dash(__name__, title='Tráfego Urbano')                         
 
-df_2022 = pd.read_csv("./assets/bd_transito_2022.csv", sep=",")
+df_2022 = pd.read_csv("/Users/danieladomingues/Documents/dash_PI/dashboards/assets/bd_transito_2022.csv", sep=",")
 
 #Criar variaveis dia da semana para organizar Data Frame
 dias_semana_ordem = ['segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado', 'domingo']
@@ -375,56 +375,15 @@ app.layout = html.Div([
             #     id='demo-dropdown',
             #     className='demo-dropdown'),
             html.H3(
-                children='Selecione uma das opções abaixo:', className="body-do-painel-texto"),
-            html.Div(style={"margin-bottom": "20px"}),  # Espaçamento entre os dropdowns
-            
-            #Dropdown seleção do ano
+                children='Para otimizar a fluidez e melhorar a mobilidade no transporte', className="body-do-painel-texto"),
             html.Div(
-                className="painel-lateral",
-                children=[
-                html.Label("Ano"),
-                dcc.Dropdown(
-                    options=[
-                        {"label": "2021", "value": "opcao1"},
-                        {"label": "2022", "value": "opcao2"},
-                    ],
-                    style={'align-items': 'center', 'justify-content': 'center', 'width':'95%'},
-                    searchable=False,
-                    id='demo-dropdown',
-                    placeholder="Selecione o ano",
-                    className='lateral-dropdown',
-                )
-                ],
-            ),
-            
-            html.Div(style={"margin-bottom": "20px"}),  # Espaçamento entre os dropdowns
-            
-            #Dropdown seleção da região
-            html.Div(
-                className="painel-lateral",
-                id='base-dados-dropdown',
-                children=[
-                html.Label("Região"),
-                dcc.Dropdown(
-                    options=[
-                        {"label": "Todos", "value": "todos"},
-                        {"label": "Leste", "value": "regiao1"},
-                        {"label": "Norte", "value": "regiao2"},
-                        {"label": "Sul", "value": "regiao3"},
-                        {"label": "Oeste", "value": "regiao4"},
-                    ],
-                    placeholder="Selecione a Regiao",
-                    style={'align-items': 'center', 'justify-content': 'center', 'width':'95%'},
-                    searchable=False,
-                    id='lateral-dropdown',
-                    className='lateral-dropdown'
-                )
-                ],
-            ),
-        ],
-        ),
+                children='''
+                Lorem Ipsum é simplesmente um texto fictício da indústria tipográfica e de impressão. Lorem Ipsum tem sido o texto fictício padrão da indústria desde os anos 1500, quando um impressor desconhecido pegou uma galera de tipos e os embaralhou para fazer um livro de espécimes de tipos. Ele sobreviveu não apenas a cinco séculos, mas também ao salto para a composição eletrônica, permanecendo essencialmente inalterado. 
+                ''', className="body-do-painel-texto"),
+        ]
+    ),
 
-
+    
     # INDICADORES
     html.Div(
     className="figIndicadorZonaMaoirMediaCongestionamento",
