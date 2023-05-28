@@ -47,12 +47,13 @@ margin-left: 100px;
 .titulo-drop{
     margin-top: 100px;
 }
-.demo-dropdown{
-    color: #0A0140;
-    padding-left: 20px;
-    padding-right: 20px;
-    padding-top: 40px;
+.painel-lateral{
+    margin-left: 10px;
 }
+.lateral-dropdown{
+    color: #0A0140;
+}
+
 .body-do-painel-texto{
     padding-left: 20px;
     padding-right: 20px;
