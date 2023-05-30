@@ -203,27 +203,24 @@ figGraficoBarraComparacaoCongestionamentoMesRegiao.update_layout(
 
 # Agrupar por mês e região e calcular a soma do tamanho
 df_grouped = df_2022.groupby(['Mes', 'Regiao'], sort=False)['Tamanho'].sum().reset_index()
-df_grouped.head()
+initial_region = 'LESTE'
+
 # Criar o gráfico de barras
 figGraficoBarrasHoriCongestionamentoMes = go.Figure(data=[
-    go.Bar(name='LESTE', y=df_grouped[df_grouped['Regiao'] == 'LESTE']['Mes'], x=df_grouped[df_grouped['Regiao'] == 'LESTE']['Tamanho'], orientation='h', marker=dict(line=dict(width=0))),
-    go.Bar(name='CENTRO', y=df_grouped[df_grouped['Regiao'] == 'CENTRO']['Mes'], x=df_grouped[df_grouped['Regiao'] == 'CENTRO']['Tamanho'], orientation='h', marker=dict(line=dict(width=0))),
-    go.Bar(name='NORTE', y=df_grouped[df_grouped['Regiao'] == 'NORTE']['Mes'], x=df_grouped[df_grouped['Regiao'] == 'NORTE']['Tamanho'], orientation='h', marker=dict(line=dict(width=0))),
-    go.Bar(name='OESTE', y=df_grouped[df_grouped['Regiao'] == 'OESTE']['Mes'], x=df_grouped[df_grouped['Regiao'] == 'OESTE']['Tamanho'], orientation='h', marker=dict(line=dict(width=0))),
-    go.Bar(name='SUL', y=df_grouped[df_grouped['Regiao'] == 'SUL']['Mes'], x=df_grouped[df_grouped['Regiao'] == 'SUL']['Tamanho'], orientation='h', marker=dict(line=dict(width=0)))
+    go.Bar(name=initial_region, y=df_grouped[df_grouped['Regiao'] == initial_region]['Mes'], x=df_grouped[df_grouped['Regiao'] == initial_region]['Tamanho'], orientation='h'),
 ])
 
 # Atualizar o layout do gráfico
 figGraficoBarrasHoriCongestionamentoMes.update_layout(
+    autosize=False,
+    width=500,
+    height=500,
     title='Comparação de Congestionamento por Mês e Região',
     xaxis_title='Mês',
     yaxis_title='Congestionamento (em metros)',
     barmode='group',
-    autosize=False,
-    width=500,
-    height=500,
-    plot_bgcolor='rgba(0, 0, 0, 0)',  # Define a cor de fundo do gráfico como transparente
-    paper_bgcolor='#252a48',  # Define a cor de fundo do papel como '#252a48'
+    plot_bgcolor='rgba(0, 0, 0, 0)',  # Define the background color of the graph as transparent
+    paper_bgcolor='#252a48',  # Define the background color of the paper as '#252a48'
     legend=dict(
         x=1.02,
         y=0.98,
@@ -231,15 +228,12 @@ figGraficoBarrasHoriCongestionamentoMes.update_layout(
         bordercolor='#252a48',
         borderwidth=2,
         font=dict(
-            color='#fff' # Define a cor do texto da legenda como branco
+            color='#fff' # Define the color of the legend text as white
         )
-    ),
-        title_font=dict(
-        color='#fff'  # Define a cor do título do gráfico como branco
     ),
     xaxis=dict(
         tickfont=dict(
-            color='#fff'  # Define a cor dos números e meses no eixo X como branco
+            color='#fff'  # Define a cor dos números no eixo X como branco
         ),
         title_font=dict(
             color='#fff'  # Define a cor do título do eixo X como branco
@@ -253,7 +247,7 @@ figGraficoBarrasHoriCongestionamentoMes.update_layout(
             color='#fff'  # Define a cor do título do eixo Y como branco
         )
     )
-    )
+)
 
 #Gerar Data Frame com média agrupadas por mês e região
 df_grouped2 = df_2022.groupby(['Mes', 'Regiao'], sort=False)['Tamanho'].mean().reset_index()
@@ -348,8 +342,6 @@ figGraficoBarraDiaSemana.update_layout(
     )
     )
 
-
-
 # Caixa layout
 app.layout = html.Div([ 
     
@@ -365,12 +357,43 @@ app.layout = html.Div([
         children=[
             html.Img(
                 src="./assets/utils/logo.png", alt="logo", className='logo'),
-
+            # dcc.Dropdown(, 
+            #     value='', 
+            #     id='demo-dropdown',
+            #     className='demo-dropdown'),
             html.H3(
-                children='Para otimizar a fluidez e melhorar a mobilidade no transporte', className="body-do-painel-texto"),
-            dcc.Dropdown(
+                children='Selecione uma das opções abaixo:', className="body-do-painel-texto"),
+            html.Div(style={"margin-bottom": "20px"}),  # Espaçamento entre os dropdowns
+
+            #Dropdown seleção do ano
+            html.Div(
+                className="painel-lateral",
+                children=[
+                html.Label("Ano", className="titulo-dropdown"),
+                dcc.Dropdown(
                     options=[
-                        {"label": "Todas as opcoes", "value": "Todas as opcoes"},
+                        {"label": "2021", "value": "opcao1"},
+                        {"label": "2022", "value": "opcao2"},
+                    ],
+                    style={'align-items': 'center', 'justify-content': 'center', 'width':'95%'},
+                    searchable=False,
+                    id='demo-dropdown',
+                    placeholder="Selecione o ano",
+                    className='lateral-dropdown'
+                ),
+                ],
+            ),
+            html.Div(style={"margin-bottom": "20px"}),  # Espaçamento entre os dropdowns
+
+            #Dropdown seleção do ano
+            html.Div(
+                className="painel-lateral",
+                id='base-dados-dropdown',
+                children=[
+                html.Label("Região", className="titulo-dropdown"),
+                dcc.Dropdown(
+                    options=[
+                        {"label": "Todas as regioes", "value": "Todas as regioes"},
                         {"label": "Leste", "value": "LESTE"},
                         {"label": "Norte", "value": "NORTE"},
                         {"label": "Sul", "value": "SUL"},
@@ -382,6 +405,9 @@ app.layout = html.Div([
                     id='dropdown-regiao',
                     className='lateral-dropdown'
                 )
+                ],
+            ),
+
         ]
     ),
 
@@ -448,11 +474,10 @@ app.layout = html.Div([
     children=[
         dcc.Graph(
             id='figGraficoBarrasHoriCongestionamentoMes',
-            figure=figGraficoBarrasHoriCongestionamentoMes,
+            figure=figGraficoBarrasHoriCongestionamentoMes,  
             style={
                 'borderRadius': '10px',
-                'border': '5px solid #252a48'
-            }        
+                'border': '5px solid #252a48'}    
 )
     ]
 ),
@@ -510,65 +535,93 @@ app.layout = html.Div([
     ]
 ),
 
-])
-@app.callback(
-    Output('figGraficoBarrasHoriCongestionamentoMes','figure'),
-    Input ('dropdown-regiao', 'value')
+    html.Div(
+    className="figGraficoLinhaComparacaoRegiaoMes",
+    children=[
+        dcc.Graph(
+            id='figGraficoLinhaComparacaoRegiaoMes',
+            figure=figGraficoLinhaComparacaoRegiaoMes,
+            style={
+                'borderRadius': '10px',
+                'border': '5px solid #252a48'
+            }        
 )
-def update_output(value):
-    figGraficoBarrasHoriCongestionamentoMes = go.Figure(data=[
-    go.Bar(name='LESTE', y=df_grouped[df_grouped['Regiao'] == 'LESTE']['Mes'], x=df_grouped[df_grouped['Regiao'] == 'LESTE']['Tamanho'], orientation='h', marker=dict(line=dict(width=0))),
-    go.Bar(name='CENTRO', y=df_grouped[df_grouped['Regiao'] == 'CENTRO']['Mes'], x=df_grouped[df_grouped['Regiao'] == 'CENTRO']['Tamanho'], orientation='h', marker=dict(line=dict(width=0))),
-    go.Bar(name='NORTE', y=df_grouped[df_grouped['Regiao'] == 'NORTE']['Mes'], x=df_grouped[df_grouped['Regiao'] == 'NORTE']['Tamanho'], orientation='h', marker=dict(line=dict(width=0))),
-    go.Bar(name='OESTE', y=df_grouped[df_grouped['Regiao'] == 'OESTE']['Mes'], x=df_grouped[df_grouped['Regiao'] == 'OESTE']['Tamanho'], orientation='h', marker=dict(line=dict(width=0))),
-    go.Bar(name='SUL', y=df_grouped[df_grouped['Regiao'] == 'SUL']['Mes'], x=df_grouped[df_grouped['Regiao'] == 'SUL']['Tamanho'], orientation='h', marker=dict(line=dict(width=0)))
+    ]
+),
+
+
+
 ])
-    figGraficoBarrasHoriCongestionamentoMes.update_layout(
-    title='Comparação de Congestionamento por Mês e Região',
-    xaxis_title='Mês',
-    yaxis_title='Congestionamento (em metros)',
-    barmode='group',
-    autosize=False,
-    width=500,
-    height=500,
-    plot_bgcolor='rgba(0, 0, 0, 0)',  # Define a cor de fundo do gráfico como transparente
-    paper_bgcolor='#252a48',  # Define a cor de fundo do papel como '#252a48'
-    legend=dict(
-        x=1.02,
-        y=0.98,
-        bgcolor='rgba(255, 255, 255, 0.1)',
-        bordercolor='#252a48',
-        borderwidth=2,
-        font=dict(
-            color='#fff' # Define a cor do texto da legenda como branco
-        )
-    ),
-        title_font=dict(
-        color='#fff'  # Define a cor do título do gráfico como branco
-    ),
-    xaxis=dict(
-        tickfont=dict(
-            color='#fff'  # Define a cor dos números e meses no eixo X como branco
+
+
+
+# Defina a função de callback para atualizar o gráfico quando o valor do dropdown mudar
+@app.callback(
+    Output('figGraficoBarrasHoriCongestionamentoMes', 'figure'),
+    [Input('dropdown-regiao', 'value')]
+)
+def update_graph(region):
+    colors = {'LESTE': '#3b6be3', 'CENTRO': '#14cb96', 'NORTE': '#fca05a', 'OESTE': '#ee553b', 'SUL': '#7e6bf8'}
+    
+    if region == "Todas as regioes":
+        fig = go.Figure(data=[
+            go.Bar(name='LESTE', y=df_grouped[df_grouped['Regiao'] == 'LESTE']['Mes'], x=df_grouped[df_grouped['Regiao'] == 'LESTE']['Tamanho'], orientation='h', marker=dict(color=colors['LESTE'])),
+            go.Bar(name='CENTRO', y=df_grouped[df_grouped['Regiao'] == 'CENTRO']['Mes'], x=df_grouped[df_grouped['Regiao'] == 'CENTRO']['Tamanho'], orientation='h', marker=dict(color=colors['CENTRO'])),
+            go.Bar(name='NORTE', y=df_grouped[df_grouped['Regiao'] == 'NORTE']['Mes'], x=df_grouped[df_grouped['Regiao'] == 'NORTE']['Tamanho'], orientation='h', marker=dict(color=colors['NORTE'])),
+            go.Bar(name='OESTE', y=df_grouped[df_grouped['Regiao'] == 'OESTE']['Mes'], x=df_grouped[df_grouped['Regiao'] == 'OESTE']['Tamanho'], orientation='h', marker=dict(color=colors['OESTE'])),
+            go.Bar(name='SUL', y=df_grouped[df_grouped['Regiao'] == 'SUL']['Mes'], x=df_grouped[df_grouped['Regiao'] == 'SUL']['Tamanho'], orientation='h', marker=dict(color=colors['SUL']))
+        ])
+    else:
+        filtered_data = df_grouped[df_grouped['Regiao'] == region]
+        region_color = colors[region]
+        fig = go.Figure(data=go.Bar(name=region, y=filtered_data['Mes'], x=filtered_data['Tamanho'], orientation='h', marker=dict(color=region_color)))
+    
+    fig.update_layout(
+        title=f'Tamanho por Região - {region}',
+        xaxis_title='Congestionamento (em metros)',
+        yaxis_title='Mês',
+        barmode='group',
+        plot_bgcolor='rgba(0, 0, 0, 0)',  # Define the background color of the graph as transparent
+        paper_bgcolor='#252a48',  # Define the background color of the paper as '#252a48'
+        legend=dict(
+            x=1.02,
+            y=0.98,
+            bgcolor='rgba(255, 255, 255, 0.1)',
+            bordercolor='#252a48',
+            borderwidth=2,
+            font=dict(
+                color='#fff' # Define a cor do texto da legenda como branco
+            )
         ),
         title_font=dict(
-            color='#fff'  # Define a cor do título do eixo X como branco
-        )
-    ),
-    yaxis=dict(
-        tickfont=dict(
-            color='#fff'  # Define a cor dos números no eixo Y como branco
+            color='#fff'  # Define a cor do título do gráfico como branco
         ),
-        title_font=dict(
-            color='#fff'  # Define a cor do título do eixo Y como branco
+        xaxis=dict(
+            tickfont=dict(
+                color='#fff'  # Define a cor dos números no eixo X como branco
+            ),
+            title_font=dict(
+                color='#fff'  # Define a cor do título do eixo X como branco
+            )
+        ),
+        yaxis=dict(
+            tickfont=dict(
+                color='#fff'  # Define a cor dos números no eixo Y como branco
+            ),
+            title_font=dict(
+                color='#fff'  # Define a cor do título do eixo Y como branco
+            )
         )
     )
-    )
-    if value == "Todas as lojas":
-        fig = px.line(df_grouped2, x = "Mes", y = "Tamanho", color= "Regiao")
-    else: 
-        tabela_filtrada = df_2022.loc[df_2022['Regiao'] == value, :]
-        fig = px.bar(tabela_filtrada, x = "Mes", y = "Tamanho", color= "Regiao")
+    
     return fig
+
+
+
+
+
+
+
 # Colocar no ar
 if __name__ == '__main__':
     app.run_server(debug=True)
