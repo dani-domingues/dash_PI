@@ -298,11 +298,11 @@ df_grouped3 = df_2022.groupby(['Dia da Semana', 'Regiao'], sort=False)['Tamanho'
 df_grouped3.head()
 # Criar o gráfico de barras
 figGraficoBarraDiaSemana = go.Figure(data=[
-    go.Bar(name='LESTE', x=df_grouped3[df_grouped3['Regiao'] == 'LESTE']['Dia da Semana'], y=df_grouped3[df_grouped3['Regiao'] == 'LESTE']['Tamanho']),
-    go.Bar(name='CENTRO', x=df_grouped3[df_grouped3['Regiao'] == 'CENTRO']['Dia da Semana'], y=df_grouped3[df_grouped3['Regiao'] == 'CENTRO']['Tamanho']),
-    go.Bar(name='NORTE', x=df_grouped3[df_grouped3['Regiao'] == 'NORTE']['Dia da Semana'], y=df_grouped3[df_grouped3['Regiao'] == 'NORTE']['Tamanho']),
-    go.Bar(name='OESTE', x=df_grouped3[df_grouped3['Regiao'] == 'OESTE']['Dia da Semana'], y=df_grouped3[df_grouped3['Regiao'] == 'OESTE']['Tamanho']),
-    go.Bar(name='SUL', x=df_grouped3[df_grouped3['Regiao'] == 'SUL']['Dia da Semana'], y=df_grouped3[df_grouped3['Regiao'] == 'SUL']['Tamanho'])
+    go.Bar(name='LESTE', x=df_grouped3[df_grouped3['Regiao'] == 'LESTE']['Dia da Semana'], y=df_grouped3[df_grouped3['Regiao'] == 'LESTE']['Tamanho'], marker=dict(line=dict(width=0))),
+    go.Bar(name='CENTRO', x=df_grouped3[df_grouped3['Regiao'] == 'CENTRO']['Dia da Semana'], y=df_grouped3[df_grouped3['Regiao'] == 'CENTRO']['Tamanho'], marker=dict(line=dict(width=0))),
+    go.Bar(name='NORTE', x=df_grouped3[df_grouped3['Regiao'] == 'NORTE']['Dia da Semana'], y=df_grouped3[df_grouped3['Regiao'] == 'NORTE']['Tamanho'], marker=dict(line=dict(width=0))),
+    go.Bar(name='OESTE', x=df_grouped3[df_grouped3['Regiao'] == 'OESTE']['Dia da Semana'], y=df_grouped3[df_grouped3['Regiao'] == 'OESTE']['Tamanho'], marker=dict(line=dict(width=0))),
+    go.Bar(name='SUL', x=df_grouped3[df_grouped3['Regiao'] == 'SUL']['Dia da Semana'], y=df_grouped3[df_grouped3['Regiao'] == 'SUL']['Tamanho'], marker=dict(line=dict(width=0)))
 ])
 # Atualizar o layout do gráfico
 figGraficoBarraDiaSemana.update_layout(
@@ -362,7 +362,7 @@ app.layout = html.Div([
             #     id='demo-dropdown',
             #     className='demo-dropdown'),
             html.H3(
-                children='Selecione uma das opções abaixo:', className="body-do-painel-texto"),
+                children='Selecione para filtrar:', className="body-do-painel-texto"),
             html.Div(style={"margin-bottom": "20px"}),  # Espaçamento entre os dropdowns
 
             #Dropdown seleção do ano
@@ -535,20 +535,6 @@ app.layout = html.Div([
     ]
 ),
 
-    html.Div(
-    className="figGraficoLinhaComparacaoRegiaoMes",
-    children=[
-        dcc.Graph(
-            id='figGraficoLinhaComparacaoRegiaoMes',
-            figure=figGraficoLinhaComparacaoRegiaoMes,
-            style={
-                'borderRadius': '10px',
-                'border': '5px solid #252a48'
-            }        
-)
-    ]
-),
-
 
 
 ])
@@ -565,16 +551,16 @@ def update_graph(region):
     
     if region == "Todas as regioes":
         fig = go.Figure(data=[
-            go.Bar(name='LESTE', y=df_grouped[df_grouped['Regiao'] == 'LESTE']['Mes'], x=df_grouped[df_grouped['Regiao'] == 'LESTE']['Tamanho'], orientation='h', marker=dict(color=colors['LESTE'])),
-            go.Bar(name='CENTRO', y=df_grouped[df_grouped['Regiao'] == 'CENTRO']['Mes'], x=df_grouped[df_grouped['Regiao'] == 'CENTRO']['Tamanho'], orientation='h', marker=dict(color=colors['CENTRO'])),
-            go.Bar(name='NORTE', y=df_grouped[df_grouped['Regiao'] == 'NORTE']['Mes'], x=df_grouped[df_grouped['Regiao'] == 'NORTE']['Tamanho'], orientation='h', marker=dict(color=colors['NORTE'])),
-            go.Bar(name='OESTE', y=df_grouped[df_grouped['Regiao'] == 'OESTE']['Mes'], x=df_grouped[df_grouped['Regiao'] == 'OESTE']['Tamanho'], orientation='h', marker=dict(color=colors['OESTE'])),
-            go.Bar(name='SUL', y=df_grouped[df_grouped['Regiao'] == 'SUL']['Mes'], x=df_grouped[df_grouped['Regiao'] == 'SUL']['Tamanho'], orientation='h', marker=dict(color=colors['SUL']))
+            go.Bar(name='LESTE', y=df_grouped[df_grouped['Regiao'] == 'LESTE']['Mes'], x=df_grouped[df_grouped['Regiao'] == 'LESTE']['Tamanho'], orientation='h', marker=dict(color=colors['LESTE'], line=dict(width=0))),
+            go.Bar(name='CENTRO', y=df_grouped[df_grouped['Regiao'] == 'CENTRO']['Mes'], x=df_grouped[df_grouped['Regiao'] == 'CENTRO']['Tamanho'], orientation='h', marker=dict(color=colors['CENTRO'], line=dict(width=0))),
+            go.Bar(name='NORTE', y=df_grouped[df_grouped['Regiao'] == 'NORTE']['Mes'], x=df_grouped[df_grouped['Regiao'] == 'NORTE']['Tamanho'], orientation='h', marker=dict(color=colors['NORTE'], line=dict(width=0))),
+            go.Bar(name='OESTE', y=df_grouped[df_grouped['Regiao'] == 'OESTE']['Mes'], x=df_grouped[df_grouped['Regiao'] == 'OESTE']['Tamanho'], orientation='h', marker=dict(color=colors['OESTE'], line=dict(width=0))),
+            go.Bar(name='SUL', y=df_grouped[df_grouped['Regiao'] == 'SUL']['Mes'], x=df_grouped[df_grouped['Regiao'] == 'SUL']['Tamanho'], orientation='h', marker=dict(color=colors['SUL'], line=dict(width=0)))
         ])
     else:
         filtered_data = df_grouped[df_grouped['Regiao'] == region]
         region_color = colors[region]
-        fig = go.Figure(data=go.Bar(name=region, y=filtered_data['Mes'], x=filtered_data['Tamanho'], orientation='h', marker=dict(color=region_color)))
+        fig = go.Figure(data=go.Bar(name=region, y=filtered_data['Mes'], x=filtered_data['Tamanho'], orientation='h', marker=dict(color=region_color, line=dict(width=0))))
     
     fig.update_layout(
         title=f'Tamanho por Região - {region}',

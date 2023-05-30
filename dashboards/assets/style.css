@@ -28,11 +28,11 @@
     text-shadow: 4px 63x rgba(black, .1);
     }
 .logo{
-width: 100px;
-height: 100px;
+width: 200px;
+height: 200px;
 align-items: center;
 margin-top: 40px;
-margin-left: 100px;
+margin-left: 50px;
 }
 .body-do-painel{
     position: fixed;
