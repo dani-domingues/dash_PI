@@ -11,7 +11,7 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 # definindo aplicativo do flask
 app = Dash(__name__, title='Tráfego Urbano')                         
 
-df_2022 = pd.read_csv("/Users/danieladomingues/Documents/dash_PI/dashboards/assets/bd_transito_2022.csv", sep=",")
+df_2022 = pd.read_csv("./assets/bd_transito_2022.csv", sep=",")
 
 #Criar variaveis dia da semana para organizar Data Frame
 dias_semana_ordem = ['segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado', 'domingo']
@@ -70,8 +70,8 @@ df_grouped_local1 = df_2022.groupby(['Local'], sort=False)['Tamanho'].mean()
 df_grouped_local1.sort_values(ascending=False, inplace=True)
 df_grouped_local = df_grouped_local1.reset_index()
 #Mostrando indicador de via com maior média de congestionamento
-figIndicadorZonaMaoirMediaCongestionamento = go.Figure()
-figIndicadorZonaMaoirMediaCongestionamento.add_trace(go.Indicator(
+figIndicadorViaComMaoirMediaCongestionamento = go.Figure()
+figIndicadorViaComMaoirMediaCongestionamento.add_trace(go.Indicator(
     mode='number+delta',
     title={
         "text": f"<br><br><span style='font-size:350%; color:#fff; text-align:center; margin-top:50px'>{df_grouped_local['Local'].iloc[0]}</span> </br></br><br><span style='font-size:175%; color:#fff; text-align:center;'>Via com maior média de congestionamento</br>"
@@ -81,7 +81,7 @@ figIndicadorZonaMaoirMediaCongestionamento.add_trace(go.Indicator(
     delta={'valueformat': '.1%', 'reference': df_grouped_local['Tamanho'].mean()},
     number_font={"size": 23, "color": "#fff"}  # Ajuste o tamanho e a cor do número do indicador aqui
 ))
-figIndicadorZonaMaoirMediaCongestionamento.update_layout(
+figIndicadorViaComMaoirMediaCongestionamento.update_layout(
     paper_bgcolor='#252a48',  # Define a cor de fundo do papel como '#252a48'
     font=dict(color='#fff'),  # Define a cor do texto do gráfico como branco
     height=160,
@@ -94,8 +94,8 @@ df_grouped_regiao1 = round(df_2022.groupby(['Regiao'], sort=False)['Tamanho'].me
 df_grouped_regiao1.sort_values(ascending=False, inplace=True)
 df_grouped_regiao = df_grouped_regiao1.reset_index()
 #Mostrando indicador da região com maior média de congestionamento
-figIndicadorViaComMaoirMediaCongestionamento = go.Figure()
-figIndicadorViaComMaoirMediaCongestionamento.add_trace(go.Indicator(mode='number+delta',
+figIndicadorZonaMaoirMediaCongestionamento = go.Figure()
+figIndicadorZonaMaoirMediaCongestionamento.add_trace(go.Indicator(mode='number+delta',
                             title = {"text": f"<br><span style='font-size:350%; color:#fff; text-align:center; margin-top:50px'>{df_grouped_regiao['Regiao'].iloc[0]}</span><br><br><br><span style='font-size:175%; color:#fff; text-align:center;'>Regiao com maior média de congestionamento</span>"},
                             value = round(df_grouped_regiao['Tamanho'].iloc[0],0),
                             number = {"suffix": " metros"},
@@ -103,7 +103,7 @@ figIndicadorViaComMaoirMediaCongestionamento.add_trace(go.Indicator(mode='number
                             number_font={"size": 23, "color": "#fff"}  # Ajuste o tamanho e a cor do número do indicador aqui
                             )
 )
-figIndicadorViaComMaoirMediaCongestionamento.update_layout(
+figIndicadorZonaMaoirMediaCongestionamento.update_layout(
     paper_bgcolor='#252a48',  # Define a cor de fundo do papel como '#252a48'
     font=dict(color='#fff'),  # Define a cor do texto do gráfico como branco
     height=160,
@@ -603,9 +603,58 @@ def update_graph(region):
     return fig
 
 
+@app.callback(
+    Output('figIndicadorViaComMaoirMediaCongestionamento', 'figure'),
+    [Input('dropdown-regiao', 'value')]
+)
+
+def update_indicador_via(regiao):
 
 
+    if regiao == 'Todas as regioes':
+        figIndicadorViaComMaoirMediaCongestionamento = go.Figure()
+        figIndicadorViaComMaoirMediaCongestionamento.add_trace(go.Indicator(
+            mode='number+delta',
+            title={
+                "text": f"<br><br><span style='font-size:350%; color:#fff; text-align:center; margin-top:50px'>{df_grouped_local['Local'].iloc[0]}</span> </br></br><br><span style='font-size:175%; color:#fff; text-align:center;'>Via com maior média de congestionamento</br>"
+            },
+            value=round(df_grouped_local['Tamanho'].iloc[0], 0),
+            number={"suffix": " metros"},
+            delta={'valueformat': '.1%', 'reference': df_grouped_local['Tamanho'].mean()},
+            number_font={"size": 23, "color": "#fff"}  # Ajuste o tamanho e a cor do número do indicador aqui
+        ))
+        figIndicadorViaComMaoirMediaCongestionamento.update_layout(
+            paper_bgcolor='#252a48',  # Define a cor de fundo do papel como '#252a48'
+            font=dict(color='#fff'),  # Define a cor do texto do gráfico como branco
+            height=160,
+            width=239,
+            # ... outras configurações de layout ...
+        )
 
+    else:
+        df_grouped_local1 = round(df_2022.groupby(['Regiao','Local'], sort=False)['Tamanho'].mean())
+        df_grouped_local1.sort_values(ascending=False, inplace=True)
+        df_grouped_local = df_grouped_local1.reset_index()
+        #Agrupando por local e tirando a média de congestionamento
+        filtro_regiao = df_grouped_local[df_grouped_local['Regiao'] == regiao]
+        #Mostrando indicador de via com maior média de congestionamento
+        figIndicadorViaComMaoirMediaCongestionamento = go.Figure()
+        figIndicadorViaComMaoirMediaCongestionamento.update_layout(
+            paper_bgcolor='#252a48',  # Define a cor de fundo do papel como '#252a48'
+            font=dict(color='#fff'),  # Define a cor do texto do gráfico como branco
+            height=160,
+            width=239,
+            )
+
+        figIndicadorViaComMaoirMediaCongestionamento.add_trace(go.Indicator(mode='number+delta',
+                                    title = {"text": f"<span style='font-size:80%; color:#FFF'>{filtro_regiao['Local'].iloc[0]} - Via com maior média de congestionamento</span><br><span style='font-size:70%;color:#FFF'> Relacionado com a média das demais vias</span>"},
+                                    value = round(filtro_regiao['Tamanho'].iloc[0],0),
+                                    number = {"suffix": " metros"},
+                                    delta = {'relative': True, 'valueformat': '.1%', 'reference': round(filtro_regiao['Tamanho'].mean(), 2)},
+                                    number_font={"size": 23, "color": "#fff"}  # Ajuste o tamanho e a cor do número do indicador aqui
+                                    )
+        )
+    return figIndicadorViaComMaoirMediaCongestionamento
 
 
 # Colocar no ar
