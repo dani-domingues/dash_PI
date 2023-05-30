@@ -60,6 +60,10 @@ margin-left: 100px;
     text-align: justify;
     line-height: 1.6em;
 }
+.lateral-dropdown{
+margin-left: 20px;    color: #0A0140;
+    width: 280px;
+}
 /* GRAFICOS */
 
 .figGraficoBarrasHoriCongestionamentoMes{

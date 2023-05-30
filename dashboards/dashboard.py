@@ -215,20 +215,13 @@ figGraficoBarrasHoriCongestionamentoMes = go.Figure(data=[
 
 # Atualizar o layout do gráfico
 figGraficoBarrasHoriCongestionamentoMes.update_layout(
-    autosize=False,
-    width=500,
-    height=500,
-    title='Comparação de Congestionamento por Mês e Região',
-    xaxis_title='Mês',
-    yaxis_title='Congestionamento (em metros)',
-    barmode='group'
-)
-figGraficoBarrasHoriCongestionamentoMes.update_layout(
     title='Comparação de Congestionamento por Mês e Região',
     xaxis_title='Mês',
     yaxis_title='Congestionamento (em metros)',
     barmode='group',
     autosize=False,
+    width=500,
+    height=500,
     plot_bgcolor='rgba(0, 0, 0, 0)',  # Define a cor de fundo do gráfico como transparente
     paper_bgcolor='#252a48',  # Define a cor de fundo do papel como '#252a48'
     legend=dict(
@@ -355,6 +348,8 @@ figGraficoBarraDiaSemana.update_layout(
     )
     )
 
+
+
 # Caixa layout
 app.layout = html.Div([ 
     
@@ -370,16 +365,23 @@ app.layout = html.Div([
         children=[
             html.Img(
                 src="./assets/utils/logo.png", alt="logo", className='logo'),
-            # dcc.Dropdown(, 
-            #     value='', 
-            #     id='demo-dropdown',
-            #     className='demo-dropdown'),
+
             html.H3(
                 children='Para otimizar a fluidez e melhorar a mobilidade no transporte', className="body-do-painel-texto"),
-            html.Div(
-                children='''
-                Lorem Ipsum é simplesmente um texto fictício da indústria tipográfica e de impressão. Lorem Ipsum tem sido o texto fictício padrão da indústria desde os anos 1500, quando um impressor desconhecido pegou uma galera de tipos e os embaralhou para fazer um livro de espécimes de tipos. Ele sobreviveu não apenas a cinco séculos, mas também ao salto para a composição eletrônica, permanecendo essencialmente inalterado. 
-                ''', className="body-do-painel-texto"),
+            dcc.Dropdown(
+                    options=[
+                        {"label": "Todas as opcoes", "value": "Todas as opcoes"},
+                        {"label": "Leste", "value": "LESTE"},
+                        {"label": "Norte", "value": "NORTE"},
+                        {"label": "Sul", "value": "SUL"},
+                        {"label": "Oeste", "value": "OESTE"},
+                    ],
+                    placeholder="Selecione a Regiao",
+                    style={'align-items': 'center', 'justify-content': 'center', 'width':'95%'},
+                    searchable=False,
+                    id='dropdown-regiao',
+                    className='lateral-dropdown'
+                )
         ]
     ),
 
@@ -508,10 +510,65 @@ app.layout = html.Div([
     ]
 ),
 
-
-
 ])
-
+@app.callback(
+    Output('figGraficoBarrasHoriCongestionamentoMes','figure'),
+    Input ('dropdown-regiao', 'value')
+)
+def update_output(value):
+    figGraficoBarrasHoriCongestionamentoMes = go.Figure(data=[
+    go.Bar(name='LESTE', y=df_grouped[df_grouped['Regiao'] == 'LESTE']['Mes'], x=df_grouped[df_grouped['Regiao'] == 'LESTE']['Tamanho'], orientation='h', marker=dict(line=dict(width=0))),
+    go.Bar(name='CENTRO', y=df_grouped[df_grouped['Regiao'] == 'CENTRO']['Mes'], x=df_grouped[df_grouped['Regiao'] == 'CENTRO']['Tamanho'], orientation='h', marker=dict(line=dict(width=0))),
+    go.Bar(name='NORTE', y=df_grouped[df_grouped['Regiao'] == 'NORTE']['Mes'], x=df_grouped[df_grouped['Regiao'] == 'NORTE']['Tamanho'], orientation='h', marker=dict(line=dict(width=0))),
+    go.Bar(name='OESTE', y=df_grouped[df_grouped['Regiao'] == 'OESTE']['Mes'], x=df_grouped[df_grouped['Regiao'] == 'OESTE']['Tamanho'], orientation='h', marker=dict(line=dict(width=0))),
+    go.Bar(name='SUL', y=df_grouped[df_grouped['Regiao'] == 'SUL']['Mes'], x=df_grouped[df_grouped['Regiao'] == 'SUL']['Tamanho'], orientation='h', marker=dict(line=dict(width=0)))
+])
+    figGraficoBarrasHoriCongestionamentoMes.update_layout(
+    title='Comparação de Congestionamento por Mês e Região',
+    xaxis_title='Mês',
+    yaxis_title='Congestionamento (em metros)',
+    barmode='group',
+    autosize=False,
+    width=500,
+    height=500,
+    plot_bgcolor='rgba(0, 0, 0, 0)',  # Define a cor de fundo do gráfico como transparente
+    paper_bgcolor='#252a48',  # Define a cor de fundo do papel como '#252a48'
+    legend=dict(
+        x=1.02,
+        y=0.98,
+        bgcolor='rgba(255, 255, 255, 0.1)',
+        bordercolor='#252a48',
+        borderwidth=2,
+        font=dict(
+            color='#fff' # Define a cor do texto da legenda como branco
+        )
+    ),
+        title_font=dict(
+        color='#fff'  # Define a cor do título do gráfico como branco
+    ),
+    xaxis=dict(
+        tickfont=dict(
+            color='#fff'  # Define a cor dos números e meses no eixo X como branco
+        ),
+        title_font=dict(
+            color='#fff'  # Define a cor do título do eixo X como branco
+        )
+    ),
+    yaxis=dict(
+        tickfont=dict(
+            color='#fff'  # Define a cor dos números no eixo Y como branco
+        ),
+        title_font=dict(
+            color='#fff'  # Define a cor do título do eixo Y como branco
+        )
+    )
+    )
+    if value == "Todas as lojas":
+        fig = px.line(df_grouped2, x = "Mes", y = "Tamanho", color= "Regiao")
+    else: 
+        tabela_filtrada = df_2022.loc[df_2022['Regiao'] == value, :]
+        fig = px.bar(tabela_filtrada, x = "Mes", y = "Tamanho", color= "Regiao")
+    return fig
 # Colocar no ar
 if __name__ == '__main__':
     app.run_server(debug=True)
