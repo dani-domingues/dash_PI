@@ -16,11 +16,10 @@ df_2022 = pd.read_csv("/Users/danieladomingues/Documents/dash_PI/dashboards/asse
 #Criar variaveis dia da semana para organizar Data Frame
 dias_semana_ordem = ['segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado', 'domingo']
 
-
+# GRAFICO PIZZA
 # Agrupar por dia da semana e região e calcular a soma do tamanho
 df1 = pd.Categorical(df_2022['Dia da Semana'], categories=dias_semana_ordem, ordered=True)
 df_grouped3 = round(df_2022.groupby(['Dia da Semana', 'Regiao'], sort=False)['Tamanho'].mean().reset_index(),2)
-
 # Gerar gráfico de pizza comparando região com tamanho do congestionamento
 figGraficoCongestionamentoMesRegiao = go.Figure()
 figGraficoCongestionamentoMesRegiao.add_trace(go.Pie(labels=df_grouped3['Regiao'],values=df_grouped3['Tamanho'], hole=.65))
@@ -65,6 +64,9 @@ figGraficoCongestionamentoMesRegiao.update_layout(
     )
     )
 
+# _____________________________________________________________
+
+# INCADOR VIA
 #Agrupando por local e tirando a média de congestionamento
 df_grouped_local1 = df_2022.groupby(['Local'], sort=False)['Tamanho'].mean()
 df_grouped_local1.sort_values(ascending=False, inplace=True)
@@ -88,7 +90,9 @@ figIndicadorZonaMaoirMediaCongestionamento.update_layout(
     width=239,
     # ... outras configurações de layout ...
 )
+# _______________________________________________________________
 
+# INDICADOR DIA
 #Agrupando por região e calculando a média de cada região
 df_grouped_regiao1 = round(df_2022.groupby(['Regiao'], sort=False)['Tamanho'].mean(),2)
 df_grouped_regiao1.sort_values(ascending=False, inplace=True)
@@ -110,6 +114,9 @@ figIndicadorViaComMaoirMediaCongestionamento.update_layout(
     width=239,
     )
 
+# _______________________________________________________________
+
+# INDICADOR MES
 #Agrupando por dia da semana
 df_grouped_dia_semana = round(df_2022.groupby(['Dia da Semana'], sort=False)['Tamanho'].mean(),2)
 df_grouped_dia_semana.sort_values(ascending=False, inplace=True)
@@ -131,6 +138,9 @@ figIndicadorDiaComMaiorMediaCongestionamento.update_layout(
     width=239,
 )
 
+# _______________________________________________________________
+
+# INDICADOR REGIAO
 #AgrupandoMes MAior Media de Congestionamento
 df_grouped_mes = round(df_2022.groupby(['Mes'], sort=False)['Tamanho'].mean(),2)
 df_grouped_mes.sort_values(ascending=False, inplace=True)
@@ -152,6 +162,9 @@ figIndicadorMesMaiorMediaCongestionamento .update_layout(
     width=239,
     )
 
+# _______________________________________________________________
+
+# GRAFICO BARRA GRANDE VERTICAL MES E REGIAO
 # Agrupar por mês e região e calcular a soma do tamanho do congestionamento
 df_grouped_mes = df_2022.groupby(['Mes', 'Regiao'], sort=False)['Tamanho'].sum().reset_index()
 # Criar o gráfico de barras comparando cada região
@@ -201,15 +214,17 @@ figGraficoBarraComparacaoCongestionamentoMesRegiao.update_layout(
     )
 )
 
+
+# _______________________________________________________________
+
+# GRAFICO BARRA PEQUENA HORIZONTAL MES E REGIAO
 # Agrupar por mês e região e calcular a soma do tamanho
 df_grouped = df_2022.groupby(['Mes', 'Regiao'], sort=False)['Tamanho'].sum().reset_index()
 initial_region = 'LESTE'
-
 # Criar o gráfico de barras
 figGraficoBarrasHoriCongestionamentoMes = go.Figure(data=[
     go.Bar(name=initial_region, y=df_grouped[df_grouped['Regiao'] == initial_region]['Mes'], x=df_grouped[df_grouped['Regiao'] == initial_region]['Tamanho'], orientation='h'),
 ])
-
 # Atualizar o layout do gráfico
 figGraficoBarrasHoriCongestionamentoMes.update_layout(
     autosize=False,
@@ -249,6 +264,9 @@ figGraficoBarrasHoriCongestionamentoMes.update_layout(
     )
 )
 
+# _______________________________________________________________
+
+# GRAFICO LINHA MES E REGIAO
 #Gerar Data Frame com média agrupadas por mês e região
 df_grouped2 = df_2022.groupby(['Mes', 'Regiao'], sort=False)['Tamanho'].mean().reset_index()
 df_grouped2.head()
@@ -291,6 +309,10 @@ figGraficoLinhaComparacaoRegiaoMes.update_layout(
     )
     )
 
+
+# _______________________________________________________________
+
+# GRAFICO BARRA GRANDE DIAS DA SEMANA
 dias_semana_ordem = ['segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado', 'domingo']
 # Agrupar por dia da semana e região e calcular a soma do tamanho
 df2 = pd.Categorical(df_2022['Dia da Semana'],categories=dias_semana_ordem, ordered=True)
@@ -342,6 +364,9 @@ figGraficoBarraDiaSemana.update_layout(
     )
     )
 
+# _______________________________________________________________
+
+# PARTE DO HTML
 # Caixa layout
 app.layout = html.Div([ 
     
