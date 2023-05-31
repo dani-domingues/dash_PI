@@ -638,23 +638,29 @@ def update_indicador_via(regiao):
         #Agrupando por local e tirando a média de congestionamento
         filtro_regiao = df_grouped_local[df_grouped_local['Regiao'] == regiao]
         #Mostrando indicador de via com maior média de congestionamento
+
+        
         figIndicadorViaComMaoirMediaCongestionamento = go.Figure()
         figIndicadorViaComMaoirMediaCongestionamento.update_layout(
             paper_bgcolor='#252a48',  # Define a cor de fundo do papel como '#252a48'
             font=dict(color='#fff'),  # Define a cor do texto do gráfico como branco
             height=160,
-            width=239,
-            )
-
-        figIndicadorViaComMaoirMediaCongestionamento.add_trace(go.Indicator(mode='number+delta',
-                                    title = {"text": f"<span style='font-size:350%; color:#fff; text-align:center; margin-top:50px'>{filtro_regiao['Local'].iloc[0]} </span> </br></br><br><span style='font-size:175%; color:#fff; text-align:center;'>Via com maior média de congestionamento</span><br> "},
-                                    value = round(filtro_regiao['Tamanho'].iloc[0],0),
-                                    number = {"suffix": " metros"},
-                                    delta = {'relative': True, 'valueformat': '.1%', 'reference': round(filtro_regiao['Tamanho'].mean(), 2)},
-                                    number_font={"size": 23, "color": "#fff"}  # Ajuste o tamanho e a cor do número do indicador aqui
-                                    )
+            width=239
         )
-    return figIndicadorViaComMaoirMediaCongestionamento
+
+        figIndicadorViaComMaoirMediaCongestionamento.add_trace(go.Indicator(
+            mode='number+delta',
+            title={
+                "text": f"<span style='font-size:350%; color:#fff; text-align:center; margin-top:50px'>{filtro_regiao['Local'].iloc[0]}<br> </span> </br></br><br><span style='font-size:175%; color:#fff; text-align:center;'>Via com maior média de congestionamento</span><br> "
+            },
+            value=round(filtro_regiao['Tamanho'].iloc[0], 0),
+            number={"suffix": " metros"},
+            delta={'relative': True, 'valueformat': '.1%', 'reference': round(filtro_regiao['Tamanho'].mean(), 2)},
+            number_font={"size": 20, "color": "#fff"},  # Ajuste o tamanho e a cor do número do indicador aqui
+            title_font={"size": 4.3}  # Ajuste o tamanho da fonte do título aqui
+        ))
+
+        return figIndicadorViaComMaoirMediaCongestionamento
 
 
 # Colocar no ar
