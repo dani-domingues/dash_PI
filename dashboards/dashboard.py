@@ -647,7 +647,7 @@ def update_indicador_via(regiao):
             )
 
         figIndicadorViaComMaoirMediaCongestionamento.add_trace(go.Indicator(mode='number+delta',
-                                    title = {"text": f"<span style='font-size:80%; color:#FFF'>{filtro_regiao['Local'].iloc[0]} - Via com maior média de congestionamento</span><br><span style='font-size:70%;color:#FFF'> Relacionado com a média das demais vias</span>"},
+                                    title = {"text": f"<span style='font-size:350%; color:#fff; text-align:center; margin-top:50px'>{filtro_regiao['Local'].iloc[0]} </span> </br></br><br><span style='font-size:175%; color:#fff; text-align:center;'>Via com maior média de congestionamento</span><br> "},
                                     value = round(filtro_regiao['Tamanho'].iloc[0],0),
                                     number = {"suffix": " metros"},
                                     delta = {'relative': True, 'valueformat': '.1%', 'reference': round(filtro_regiao['Tamanho'].mean(), 2)},
