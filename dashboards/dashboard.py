@@ -11,7 +11,7 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 # definindo aplicativo do flask
 app = Dash(__name__, title='Tráfego Urbano')                         
 
-df_2022 = pd.read_csv("./assets/bd_transito_2022.csv", sep=",")
+df_2022 = pd.read_csv("/Users/danieladomingues/Documents/dash_PI/dashboards/assets/bd_transito_2022.csv", sep=",")
 
 #Criar variaveis dia da semana para organizar Data Frame
 dias_semana_ordem = ['segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado', 'domingo']
@@ -74,7 +74,7 @@ figIndicadorViaComMaoirMediaCongestionamento = go.Figure()
 figIndicadorViaComMaoirMediaCongestionamento.add_trace(go.Indicator(
     mode='number+delta',
     title={
-        "text": f"<br><br><span style='font-size:350%; color:#fff; text-align:center; margin-top:50px'>{df_grouped_local['Local'].iloc[0]}</span> </br></br><br><span style='font-size:175%; color:#fff; text-align:center;'>Via com maior média de congestionamento</br>"
+        "text": f"<span style='font-size:350%; color:#fff; text-align:center; margin-top:50px'>{df_grouped_local['Local'].iloc[0]}</span> </br></br><br><span style='font-size:175%; color:#fff; text-align:center;'> Via com maior média de congestionamento</br>"
     },
     value=round(df_grouped_local['Tamanho'].iloc[0], 0),
     number={"suffix": " metros"},
